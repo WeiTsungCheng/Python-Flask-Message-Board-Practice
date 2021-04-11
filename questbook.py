@@ -51,8 +51,8 @@ class User(UserMixin, db.Model):  # 使用者資料表
 
 @app.route('/')
 def index():
-    gb = Guestbook.query.all()
-    return render_template("index.html", books=gb)
+
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 80, debug=True)
