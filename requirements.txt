@@ -1,3 +1,4 @@
+gunicorn
 pip==21.0.1
 Flask==1.1.1
 Flask-Login==0.4.1
