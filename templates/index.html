@@ -1,13 +1,34 @@
 <!doctype html>
 <html>
     <head>
-        <meta charset="utf8">
+         <!-- 指定螢幕寬度為裝置寬度，畫面載入初始縮放比例 100% -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
         <base href="/static/">
-        <title> 我是一大狗勾 </title>
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     </head>
+
     <body>
-        <p> 雷系 </p>
-        <p> 進化雷丘 </p>
-        <img src="img/boy.jpg">
+        <p>目前留言人數：{{ books|length }}</p>
+        {% for b in books %}
+        <table width="350" class="msgBox">
+            <tr>
+            <td width="75" valign="top">
+                <img width="75" height="75" src="icons/{{b.icon}}">
+            </td>
+            <td valign="top">
+                {{b.message|nl2br}}
+            </td>
+            </tr>
+            <tr>
+            <td colspan="2" align="right">
+            By {{b.guestname}} @ {{b.postdate|datetimefilter }}
+            </tr>
+        </table>
+        {% endfor %}
     </body>
+
 </html>

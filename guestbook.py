@@ -31,7 +31,7 @@ def nl2br(eval_ctx, value):
                           for p in _paragraph_re.split(escape(value)))
     if eval_ctx.autoescape:
         result = Markup(result)
-    return
+    return result
 
 db = SQLAlchemy(app)
 
