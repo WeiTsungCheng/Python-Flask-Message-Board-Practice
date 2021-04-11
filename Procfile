@@ -1,1 +1,1 @@
-web: gunicorn questbook:app
+web: gunicorn guestbook:app

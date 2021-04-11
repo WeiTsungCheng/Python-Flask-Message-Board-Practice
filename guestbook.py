@@ -1,4 +1,8 @@
 from datetime import datetime
+from dateutil import tz
+from jinja2 import evalcontextfilter, Markup, escape
+import re
+
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
@@ -8,6 +12,26 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydb.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = b'123abc'
+
+@app.template_filter()
+def datetimefilter(utc):
+    utc_zone = tz.gettz('UTC')
+    tw_zone = tz.gettz('Asia/Taipei')
+    utc = utc.replace(tzinfo=utc_zone)
+    tw_time = utc.astimezone(tw_zone)
+    return tw_time.strftime('%Y/%m/%d %H:%M')
+
+
+_paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
+
+@app.template_filter()
+@evalcontextfilter
+def nl2br(eval_ctx, value):
+    result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', Markup('<br>\n'))
+                          for p in _paragraph_re.split(escape(value)))
+    if eval_ctx.autoescape:
+        result = Markup(result)
+    return
 
 db = SQLAlchemy(app)
 
@@ -53,7 +77,8 @@ class User(UserMixin, db.Model):  # 使用者資料表
 @app.route('/index.html')
 @app.route('/')
 def index():
-    return render_template('index.html')
+    gb = Guestbook.query.all()
+    return render_template('index.html', books=gb)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 80, debug=True)
