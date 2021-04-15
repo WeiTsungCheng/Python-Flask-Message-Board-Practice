@@ -6,43 +6,78 @@
         <base href="/static/">
         <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet" href="css/main.css">
-            <style>
-                tr.border_bottom td {
-                    border-bottom:1pt solid white;
-                    padding-bottom: 10px;
-                }
-                .edit_ico {
-                    padding-right: 10px;
-                }
+        <style>
+            tr.border_bottom td {
+                border-bottom:1pt solid white;
+                padding-bottom: 10px;
+            }
+            .edit_ico {
+                padding-right: 10px;
+            }
 
-                .del_ico {
-                    cursor: pointer;
-                }
+            .del_ico {
+                cursor: pointer;
+            }
 
-                #logout {
-                    float: right;
-                    padding: 3px;
-                    text-decoration: none;
-                }
+            #logout {
+                float: right;
+                padding: 3px;
+                text-decoration: none;
+            }
 
-                #logout:link {
-                    color: white;
-                }
+            #logout:link {
+                color: white;
+            }
 
-                #logout:visited {
-                    color: white;
-                }
+            #logout:visited {
+                color: white;
+            }
 
-                #logout:hover {
-                    color: black;
-                    background-color: bisque;
-                }
-            </style>
+            #logout:hover {
+                color: black;
+                background-color: bisque;
+            }
+        </style>
+
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
+
+        <script>
+            $( function() {
+                $('.del_ico').on('click', function() {
+                    _id = $(this).attr('id').substr(1);
+                    $.confirm({
+                        boxWidth: '40%',
+                        useBootstrap: false,
+                        title: '確定刪除？',
+                        content: '一旦刪除，資料就無法復原喔！' + _id,
+                        type: 'red',
+                        buttons: {
+                            confirm: {
+                                text: '確定刪除',
+                                btnClass: 'btn-red',
+                                action: function(){
+                                  $.post( "/delete", { id:_id }, function(data) {
+                                    location.reload();
+                                  });
+                                }
+                            },
+                            cancel: {
+                                text: '沒有啦～'
+                            }
+                        }
+                    });
+                });
+            } );
+        </script>
+
+        <title>汪汪喵喵留言版</title>
     </head>
     <body>
         <div id="main">
         <h1>所有留言列表</h1>
-        <p>{{user}}您好！留言數：{{ books|length }}<a href="/logout" id="logout">登出管理員</a></p>
+        <p>{{user.name}}您好！留言數：{{ books|length }}<a href="/logout" id="logout">登出管理員</a></p>
         <table width="100%" border="0" cellpadding="0" cellspacing="0">
             {% for b in books %}
             <tr class="border_bottom">

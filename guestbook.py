@@ -138,6 +138,53 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
+@app.route('/list')
+@login_required
+def list_db():
+    if current_user.is_active:
+        usr = current_user
+    gb = Guestbook.query.all()
+
+    return render_template('list.html', books=gb, user=usr)
+
+@app.route('/delete', methods=["POST"])
+@login_required
+def delete():
+    id = request.form["id"]
+    msg = Guestbook.query.filter_by(id=id).first()
+    print(msg.message)
+    db.session.delete(msg)
+    db.session.commit()
+    return "OK"
+
+@app.route('/update')
+@login_required
+def update():
+    id = request.args.get('id')
+    gb = Guestbook.query.filter_by(id=id).first()
+
+    return render_template('update.html', book=gb)
+
+@app.route("/update_msg", methods=["POST"])
+@login_required
+def update_msg():
+    try:
+        id = request.form["id"]
+        guestname = request.form["guestname"]
+        email = request.form["email"]
+        message = request.form["message"]
+        icon = request.form["icon"]
+
+        b = Guestbook.query.filter_by(id=id).first()
+        b.email = email
+        b.guestname = guestname
+        b.message = message
+        b.icon = icon
+        db.session.commit()
+    except Exception as e:
+        print("出錯啦～無法更新留言！")
+        print(e)
+    return redirect(url_for('list_db'))
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 80, debug=True)
